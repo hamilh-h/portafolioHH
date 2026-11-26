@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function esAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "TU-MAIL-ADMIN@gmail.com"
+        && request.auth.token.email_verified == true;
+    }
+
+    match /projects/{id} {
+      allow read: if resource.data.visible == true || esAdmin();
+      allow write: if esAdmin();
+    }
+
+    match /site/{doc} {
+      allow read: if true;
+      allow write: if esAdmin();
+    }
+  }
+}

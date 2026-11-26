@@ -1,0 +1,17 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function esAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "TU-MAIL-ADMIN@gmail.com"
+        && request.auth.token.email_verified == true;
+    }
+
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write: if esAdmin()
+        && request.resource.size < 50 * 1024 * 1024;
+      allow delete: if esAdmin();
+    }
+  }
+}
